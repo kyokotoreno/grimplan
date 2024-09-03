@@ -31,33 +31,54 @@ fn update_player(
 ) {
     let mut transform = query.single_mut();
 
+    let speed = 100.0 * time.delta_seconds();
+
     for pressed in keyboard_input.get_pressed() {
         match pressed {
             KeyCode::KeyW => {
-                transform.translation.x += 1.0;
+                transform.translation.x += speed;
             },
             KeyCode::KeyA => {
-                transform.translation.z -= 1.0;
+                transform.translation.z -= speed;
             },
             KeyCode::KeyS => {
-                transform.translation.x -= 1.0;
+                transform.translation.x -= speed;
             },
             KeyCode::KeyD => {
-                transform.translation.z += 1.0;
+                transform.translation.z += speed;
             },
             KeyCode::Space => {
-                transform.translation.y += 1.0;
+                transform.translation.y += speed;
             },
             KeyCode::ShiftLeft => {
-                transform.translation.y -= 1.0;
+                transform.translation.y -= speed;
             },
             _ => {}
         }
     }
 
     for mouse_input in mouse_event.read() {
-        //transform.rotate_x(mouse_input.delta.y * 0.01);
-        transform.rotate_y(-1.0 * mouse_input.delta.x * time.delta_seconds());
+        let speed = 2.5 * time.delta_seconds();
+
+        let yaw = -speed * mouse_input.delta.x;
+        let pitch = -speed * mouse_input.delta.y;
+
+        transform.rotate_y(yaw.to_radians());
+        transform.rotate_local_x(pitch.to_radians());
+
+        /*
+        transform.rotate(Quat::from_euler(
+            EulerRot::YXZ,
+            yaw.to_radians(), 
+            pitch.to_radians(),
+            0.0
+        ));
+
+        let rot = transform.rotation;
+        transform.rotation = Quat::from_xyzw(
+            rot.x.clamp(-45.0, 45.0),
+        );
+        */
     }
 }
 
