@@ -1,9 +1,13 @@
 mod menus;
 mod player;
-mod world;
+mod level;
 
-use bevy::{prelude::*, input::mouse::MouseMotion};
+use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use bevy_editor_pls::prelude::*;
+
+use player::PlayerPlugin;
+use level::LevelPlugin;
 
 fn main() {
     App::new()
@@ -15,7 +19,24 @@ fn main() {
                 }),
                 ..default()
             }),
-            EguiPlugin
+            EditorPlugin::default(),
+            EguiPlugin,
+            PlayerPlugin,
+            LevelPlugin,
         ))
+        .add_systems(Update, gizmos_test)
         .run();
+}
+
+fn gizmos_test(mut gizmos: Gizmos) {
+    use std::f32::consts::PI;
+    use bevy::color::palettes::tailwind;
+
+    gizmos.grid(
+        Vec3::ZERO,
+        Quat::from_rotation_x(PI / 2.),
+        UVec2::splat(20),
+        Vec2::new(2., 2.),
+        tailwind::GRAY_500,
+    );
 }
